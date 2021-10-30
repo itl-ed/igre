@@ -1,0 +1,5 @@
+a magenta semicircle to the left of a green circle .
+exactly one green square to the left of a green circle .
+a green triangle above the one ellipse .
+a green circle below a green ellipse .
+an ellipse to the right of the one magenta semicircle .

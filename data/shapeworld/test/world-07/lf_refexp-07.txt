@@ -1,0 +1,5 @@
+_a_q x4.(_the_1_q x11.((blue(x11) ^ triangle(x11)),((red(x4) ^ object(x4)) ^ above(x4,x11))),unknown(x4))
+_a_q x4.(_the_q x11.((yellow(x11) ^ semicircle(x11)),((red(x4) ^ triangle(x4)) ^ above(x4,x11))),unknown(x4))
+_a_q x4.(_a_q x11.((blue(x11) ^ circle(x11)),((yellow(x4) ^ object(x4)) ^ below(x4,x11))),unknown(x4))
+_exactly_1_q x4.(_a_q x10.((yellow(x10) ^ object(x10)),(cross(x4) ^ below(x4,x10))),unknown(x4))
+_a_q x4.((ellipse(x4) ^ neg(_a_q x13.((yellow(x13) ^ cross(x13)),below(x4,x13)))),unknown(x4)))

@@ -1,0 +1,5 @@
+an ellipse above exactly two blue squares .
+an ellipse to the right of a square .
+a blue square to the left of exactly one ellipse .
+a green object above two of the three squares .
+exactly one ellipse to the right of a square .

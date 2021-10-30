@@ -1,0 +1,5 @@
+a magenta object below the one yellow triangle .
+a triangle below a green cross .
+a green cross to the left of a yellow semicircle .
+a semicircle above a triangle .
+exactly one magenta triangle below the one green cross .

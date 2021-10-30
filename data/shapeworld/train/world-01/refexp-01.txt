@@ -1,0 +1,5 @@
+a cyan ellipse below at least one blue triangle .
+a yellow semicircle to the right of the one magenta semicircle .
+a yellow ellipse above a magenta semicircle .
+a yellow ellipse to the left of at least one semicircle .
+every object above the one cyan ellipse .

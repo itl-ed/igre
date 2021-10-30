@@ -1,0 +1,5 @@
+_a_q x4.((cross(x4) ^ neg(_a_q x13.((yellow(x13) ^ object(x13)),left(x4,x13)))),unknown(x4))
+_a_q x4.(((yellow(x4) ^ ellipse(x4)) ^ neg(_the_q x14.((blue(x14) ^ object(x14)),below(x4,x14)))),unknown(x4))
+_a_q x4.(((blue(x4) ^ object(x4)) ^ neg(_a_q x14.((yellow(x14) ^ ellipse(x14)),below(x4,x14)))),unknown(x4))
+_every_q x4.(_a_q x10.(ellipse(x10),(cross(x4) ^ above(x4,x10))),unknown(x4))
+_a_q x4.(_a_q x16.(_the_q x23.((blue(x23) ^ cross(x23)),((yellow(x16) ^ object(x16)) ^ below(x16,x23))),((red(x4) ^ object(x4)) ^ left(x4,x16))),unknown(x4))

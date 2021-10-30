@@ -1,0 +1,5 @@
+a cyan semicircle above a red object .
+a red semicircle below the one square .
+a cyan semicircle not below a red object .
+at most one cyan pentagon below a square .
+a cyan pentagon to the left of the one red object .

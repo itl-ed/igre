@@ -1,0 +1,5 @@
+a yellow circle above a blue triangle .
+every blue object not below a circle .
+a blue ellipse to the right of the one yellow circle .
+a yellow circle to the left of the one blue semicircle .
+a yellow object to the left of a cyan semicircle .

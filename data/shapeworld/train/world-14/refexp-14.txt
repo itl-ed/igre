@@ -1,0 +1,5 @@
+at least one magenta ellipse to the left of a green object .
+a magenta triangle to the right of at least one magenta object .
+a semicircle above the one green ellipse .
+a red ellipse to the left of a magenta ellipse .
+a magenta triangle to the right of the one blue object .

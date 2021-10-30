@@ -1,0 +1,5 @@
+_exactly_1_q x4.(_a_q x10.((cyan(x10) ^ ellipse(x10)),(cross(x4) ^ above(x4,x10))),unknown(x4))
+_a_q x4.(_the_q x15.(_the_q x22.(triangle(x22),((green(x15) ^ semicircle(x15)) ^ below(x15,x22))),(cross(x4) ^ left(x4,x15))),unknown(x4))
+_a_q x4.(_a_q x16.((green(x16) ^ cross(x16)),((green(x4) ^ semicircle(x4)) ^ right(x4,x16))),unknown(x4))
+_a_q x4.(_the_q x11.(cross(x11),((cyan(x4) ^ object(x4)) ^ below(x4,x11))),unknown(x4))
+_a_q x4.(_a_q x16.((green(x16) ^ ellipse(x16)),((cyan(x4) ^ object(x4)) ^ right(x4,x16))),unknown(x4))

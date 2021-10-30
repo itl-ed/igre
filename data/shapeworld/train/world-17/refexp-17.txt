@@ -1,0 +1,5 @@
+a magenta object not below the two cyan semicircles .
+a semicircle to the left of a blue object .
+a magenta square to the right of a cyan semicircle .
+a square to the right of the one cyan pentagon .
+a square to the left of the one blue circle .

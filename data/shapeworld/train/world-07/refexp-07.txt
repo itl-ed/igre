@@ -1,0 +1,5 @@
+a semicircle to the right of a yellow pentagon .
+a yellow object to the left of a magenta semicircle .
+exactly one magenta object not below a cross .
+a yellow pentagon above both yellow crosses .
+a yellow ellipse above a magenta semicircle .

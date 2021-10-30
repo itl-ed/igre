@@ -1,0 +1,5 @@
+every magenta pentagon not below at least one blue object .
+a yellow pentagon below a red ellipse .
+a green object to the right of the one magenta pentagon .
+a cyan triangle to the left of a semicircle .
+a red ellipse above exactly one yellow object .

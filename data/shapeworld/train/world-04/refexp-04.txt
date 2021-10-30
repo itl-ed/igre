@@ -1,0 +1,5 @@
+a green pentagon to the right of both cyan crosses .
+at most two crosses below a cyan circle .
+a cyan object not to the right of a green object .
+a pentagon not above at most one green object .
+exactly one cyan cross above exactly one red pentagon .

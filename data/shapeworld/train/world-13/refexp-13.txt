@@ -1,0 +1,5 @@
+exactly one red cross above exactly one magenta object .
+a red object not above a magenta object .
+a pentagon not below a triangle .
+a magenta object above the one red semicircle .
+a blue pentagon not below a red object .

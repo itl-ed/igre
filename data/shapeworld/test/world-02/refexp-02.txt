@@ -1,0 +1,5 @@
+the one magenta semicircle below both green objects .
+a green semicircle to the left of the one green triangle .
+a magenta object to the right of the one blue triangle .
+a green semicircle below the one green triangle .
+exactly one cross to the right of a green semicircle .

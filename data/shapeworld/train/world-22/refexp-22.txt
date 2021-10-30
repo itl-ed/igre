@@ -1,0 +1,5 @@
+a pentagon below the one red semicircle .
+a red object below a magenta triangle .
+every pentagon to the left of a semicircle .
+a blue pentagon to the right of the one magenta pentagon .
+a blue pentagon to the right of a green object .

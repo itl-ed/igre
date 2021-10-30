@@ -1,0 +1,5 @@
+at least one green object to the right of a yellow circle .
+a red cross above a blue cross .
+a cross to the left of a magenta object .
+a green circle to the right of the one red cross .
+a magenta square to the left of exactly one magenta cross .

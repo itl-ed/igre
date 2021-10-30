@@ -1,0 +1,5 @@
+_at_least_1_q x4.(_a_q x16.((yellow(x16) ^ circle(x16)),((green(x4) ^ object(x4)) ^ right(x4,x16))),unknown(x4))
+_a_q x4.(_a_q x11.((blue(x11) ^ cross(x11)),((red(x4) ^ cross(x4)) ^ above(x4,x11))),unknown(x4))
+_a_q x4.(_a_q x15.((magenta(x15) ^ object(x15)),(cross(x4) ^ left(x4,x15))),unknown(x4))
+_a_q x4.(_the_q x17.(_the_q x24.((blue(x24) ^ cross(x24)),((red(x17) ^ cross(x17)) ^ above(x17,x24))),((green(x4) ^ circle(x4)) ^ right(x4,x17))),unknown(x4))
+_a_q x4.(_the_q x17.(_the_q x24.((green(x24) ^ circle(x24)),((magenta(x17) ^ cross(x17)) ^ above(x17,x24))),((magenta(x4) ^ square(x4)) ^ left(x4,x17))),unknown(x4))

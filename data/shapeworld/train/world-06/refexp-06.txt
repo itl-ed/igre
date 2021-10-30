@@ -1,0 +1,5 @@
+a blue cross not above a blue circle .
+every red object to the right of a blue object .
+a magenta triangle below every blue object .
+a red ellipse to the right of exactly one blue pentagon .
+a blue pentagon above at least one blue cross .

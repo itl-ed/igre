@@ -1,0 +1,5 @@
+a green semicircle below the one red square .
+a red square to the left of a green cross .
+a semicircle below a green ellipse .
+a red square not below the one green semicircle .
+exactly one red square above a green object .

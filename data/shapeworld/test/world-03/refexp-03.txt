@@ -1,0 +1,5 @@
+the one square .
+exactly two circles or a cross .
+a red circle above the one red square .
+a square to the right of one of the two circles .
+a red pentagon not below the one magenta object .

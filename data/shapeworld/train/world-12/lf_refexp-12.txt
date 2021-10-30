@@ -1,0 +1,5 @@
+_every_q x4.(((red(x4) ^ ellipse(x4)) ^ neg(_a_q x14.((blue(x14) ^ object(x14)),below(x4,x14)))),unknown(x4))
+_a_q x4.(_a_q x11.((red(x11) ^ ellipse(x11)),((yellow(x4) ^ pentagon(x4)) ^ below(x4,x11))),unknown(x4))
+_a_q x4.(_the_q x16.((magenta(x16) ^ pentagon(x16)),((green(x4) ^ object(x4)) ^ right(x4,x16))),unknown(x4))
+_a_q x4.(_a_q x16.(semicircle(x16),((cyan(x4) ^ triangle(x4)) ^ left(x4,x16))),unknown(x4))
+_a_q x4.(_the_q x11.((yellow(x11) ^ object(x11)),((red(x4) ^ ellipse(x4)) ^ above(x4,x11))),unknown(x4))

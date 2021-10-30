@@ -1,0 +1,5 @@
+at least two red triangles .
+a triangle or a square .
+a square below a red ellipse .
+a triangle below the one cyan object .
+a cyan object above both red squares .
