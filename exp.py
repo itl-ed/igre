@@ -231,7 +231,7 @@ if __name__ == '__main__':
 
     parser = ArgumentParser("IGRE experiments")
     parser.add_argument("--log", type=str, help="logging location")
-    parser.add_argument("--seed", default=42, type=int, help="random seed")
+    parser.add_argument("--seed", default=66, type=int, help="random seed")
     # model 
     parser.add_argument("--feature-extractor", default="densenet161", help="feature extractor to use for images")
     parser.add_argument("--img-size", default=64, type=int, help="size of the image")

@@ -1,5 +1,6 @@
 from typing import  List, Tuple, Dict
 import re, subprocess, os, multiprocessing
+from copy import deepcopy
 from itertools import  product
 from functools import reduce
 
@@ -180,17 +181,23 @@ class HeadOnlyReasoner(Reasoner):
     def _filter(self, snt: Sentence) -> List[Sentence]:
         if isinstance(snt, AtomicSentence):
             return [snt]
-        elif isinstance(snt, AndSentence):
+        elif isinstance(snt, NegatedSentence):
+            return self._filter(snt.snt)
+        elif isinstance(snt, ConnectiveSentence):
             return self._filter(snt.left) + self._filter(snt.right)
         elif isinstance(snt, QuantifierSentence):
             return []
 
     def add_refexp(self, refexp: RefExp, model: DomainModel) -> None:
+        print(f"refexp: {refexp}")
+        k = self._filter(refexp.snt)
+        print(f"k: {k}")
         snt = reduce(lambda x,y: AndSentence(x,y), self._filter(refexp.snt))
 
-        refexp = RefExp([refexp.name, refexp.var, str(snt)])
+        update_refexp = deepcopy(refexp)
+        update_refexp.snt = snt
 
-        return super().add_refexp(refexp, model)
+        return super().add_refexp(update_refexp, model)
 
 
 class ExistentialReasoner(Reasoner):
@@ -211,7 +218,10 @@ class ExistentialReasoner(Reasoner):
 
     def add_refexp(self, refexp: RefExp, model: DomainModel) -> None:
 
-        refexp = RefExp(['_a_q', refexp.var, str(self._filter(refexp.snt))])
+        new_refexp = deepcopy(refexp)
 
-        return super().add_refexp(refexp, model)
+        new_refexp.snt = self._filter(refexp.snt)
+        new_refexp.name = '_a_q'
+
+        return super().add_refexp(new_refexp, model)
 

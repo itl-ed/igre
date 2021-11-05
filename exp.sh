@@ -9,7 +9,7 @@ mkdir $1
 # SPATIAL: ['above', 'below', 'right', 'left']
 
 python3 exp.py  --log $1 \
-                --seed 42 \
+                --seed 33 \
                 --known red blue square \
                 --feature-extractor densenet161 \
                 --img-size 64 \
@@ -29,6 +29,7 @@ python3 exp.py  --log $1 \
                 --train-num-worlds 30 \
                 --train-num-ref-exp 5 \
                 --train-num-corrections 3 \
+                --train-shuffle \
                 --train-evaluation \
                 --batch-freq 1 \
                 --batch-epochs 100 \
