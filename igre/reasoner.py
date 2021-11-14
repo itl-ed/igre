@@ -6,7 +6,7 @@ from functools import reduce
 
 from sympy import Symbol as sympy_symbol
 from sympy.logic.boolalg import to_cnf
-import timeout_decorator 
+from func_timeout import func_timeout, FunctionTimedOut 
 
 from igre.logic import *
 
@@ -53,7 +53,6 @@ class Reasoner:
         ext_in = terms in self.model.extension[name]
         return key_in and ext_in
 
-    @timeout_decorator.timeout(600, timeout_exception=StopIteration)
     def __get_cnf(self, snt: Sentence) -> Tuple[str,int]:
         """convert sentence to conjunctive normal form (CNF)
         :param snt: sentence to convert
@@ -110,10 +109,7 @@ class Reasoner:
         print(f'sentence to add: {snt}')
         self.theory.append(snt)
         self.__update_atom_index(snt)
-        try:
-            cnf, num_clauses = self.__get_cnf(snt)
-        except StopIteration:
-            return ""
+        cnf, num_clauses = self.__get_cnf(snt)
         self._cnf = self._cnf + "\n" + cnf
         self._num_clauses += num_clauses
 
@@ -124,7 +120,10 @@ class Reasoner:
         # propositionalize a sentence 
         snt = propositionalize(snt, model.entities)
         # add sentence to logic theory
-        return  self.add_sentence(snt)
+        try:
+            func_timeout(600, self.add_sentence, args=(snt,))
+        except FunctionTimedOut:
+            return ""
 
     def WMC(self,
             query: str = None,
