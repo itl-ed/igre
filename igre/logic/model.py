@@ -92,9 +92,13 @@ class DomainModel:
                 denotation.add(entity)
         return denotation
 
-    def projection(self, snt: Sentence, var: Variable) -> DomainModel:
-        """implement domain model projection"""
-        pass
+    # def projection(self, refexp: RefExp) -> DomainModel:
+    #     """implement domain model projection"""
+    #     snt, var = refexp.snt, refexp.var
+    #      = ref
+
+
+    #     retrun
 
     def eval(self,
             snt: Sentence,

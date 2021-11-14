@@ -7,6 +7,8 @@ from PIL import Image
 import torch
 from torchvision import transforms, models
 
+from igre.logic.syntax import LogicRefExpParser, RefExp
+from igre.lang import RefExpParser
 from igre.logic import DomainModel
 
 
@@ -19,8 +21,10 @@ class ShapeWorldDataset:
                 img_size:int,
                 num_worlds:int,
                 num_refexp:int,
-                num_corr: int = None,
-                shuffle: bool = True):
+                grm_path: str,
+                ace_path: str,
+                utool_path: str,
+                shuffle: bool = True,):
         
         self.data_path = data_path
         self.extractor = getattr(models, feature_extractor)(pretrained=True)
@@ -28,7 +32,9 @@ class ShapeWorldDataset:
         self.img_size = img_size
         self.num_worlds = num_worlds
         self.num_refexp = num_refexp
-        self.num_corr = num_corr
+        self.grm_path = grm_path
+        self.ace_path = ace_path
+        self.utool_path = utool_path
         self.idx2sample = list(range(self.num_worlds))
         if shuffle:
             random.shuffle(self.idx2sample)
@@ -38,6 +44,10 @@ class ShapeWorldDataset:
                             transforms.ToTensor(),
                             transforms.Normalize([0.485, 0.456, 0.406], 
                                                 [0.229, 0.224, 0.225])])
+
+        self.language = RefExpParser(self.grm_path,self.ace_path,self.utool_path)
+        self.logic = LogicRefExpParser()
+        # self.parser = lambda x: logic(language(x))
 
 
     def __get_position(self,
@@ -59,11 +69,13 @@ class ShapeWorldDataset:
                         self.img_size*e['center']['y'])
                         for e in entities}
 
-    def __get_refexps(self,refexp_path: str) -> List[str]:
+    def __get_refexps(self,refexp_path: str) -> List[RefExp]:
         """Get num_refexp from the refexp file"""
         with open(refexp_path, 'r') as file:
             refexps = [l.strip() for l in file.readlines()]
-        return random.sample(refexps, k=self.num_refexp)
+        refexps = random.sample(refexps, k=self.num_refexp)
+
+        return [self.logic(self.language(refexp)) for refexp in refexps]
 
     def __get_features(self, world_path:str, positions:Dict) -> Dict:
         """Extract first and second order features using bboxes"""
@@ -130,17 +142,17 @@ class ShapeWorldDataset:
         """len is number of situations to consider."""
         return self.num_worlds
 
-    def __get_corrections(self, corr_path: str) -> List[Tuple[str,int]]:
+    # def __get_corrections(self, corr_path: str) -> List[Tuple[str,int]]:
 
-        if not os.path.isfile(corr_path):
-            return None
-        with open(corr_path, 'r') as file:
-            reader = csv.reader(file, delimiter=',',)
-            #remove heaher
-            next(reader)
-            corrs = [(row[0].strip(), int(row[1]))  for row in reader]
+    #     if not os.path.isfile(corr_path):
+    #         return None
+    #     with open(corr_path, 'r') as file:
+    #         reader = csv.reader(file, delimiter=',',)
+    #         #remove heaher
+    #         next(reader)
+    #         corrs = [(row[0].strip(), int(row[1]))  for row in reader]
 
-            return random.sample(corrs, k=self.num_corr)
+    #         return random.sample(corrs, k=self.num_corr)
 
 
 
@@ -155,16 +167,15 @@ class ShapeWorldDataset:
         world_path = f'{self.data_path}/world-{idx:02d}/world-{idx:02d}.bmp'
         model_path = f'{self.data_path}/world-{idx:02d}/model-{idx:02d}.json'
         refexp_path = f'{self.data_path}/world-{idx:02d}/refexp-{idx:02d}.txt'
-        corr_path = f'{self.data_path}/world-{idx:02d}/corrections-{idx:02d}.csv'
+        # corr_path = f'{self.data_path}/world-{idx:02d}/corrections-{idx:02d}.csv'
 
         positions = self.__get_position(model_path)
         prop, rel = self.__get_features(world_path, positions)
         refexps = self.__get_refexps(refexp_path)
-        corrections = self.__get_corrections(corr_path)
+        # corrections = self.__get_corrections(corr_path)
         model = ShapeWorldDataset.__get_model(model_path)
-        print(f"model: {model_path}")
 
-        return prop, rel, refexps, corrections, model
+        return prop, rel, refexps, model
 
 
 

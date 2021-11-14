@@ -55,7 +55,7 @@ class Grounder:
         self.criterion = nn.BCELoss()
         # dictionary of denotation to key (features)
         self.keys: Dict[Denotation, Tensor] = dict()
-        # dictionary of dneotaitons to concept vectors
+        # dictionary of denotation to concept vectors
         self.values: Dict[Denotation, Tensor] = dict()
         # list of symbols
         self.symbols: List[Symbol] = []
@@ -76,8 +76,7 @@ class Grounder:
 
         for atom, value in atoms.items():
             denotation = atom.terms[0] if self.arity == 1 else atom.terms
-            values = self.values[denotation]
-            values[:,self.symbols.index(atom.name)] = value
+            self.values[denotation][:,self.symbols.index(atom.name)] = value
 
     def add_symbol(self, symbol: Symbol) -> None:
         """add new symbol"""
@@ -228,6 +227,13 @@ class Grounder:
         :param shuffle: if True, shuffle batches
         :param report_freq: frequency of reporting
         """
+        
+        # print("=========================")
+        # print(f"logging dataset used")
+        # for denotation, concepts in self.values.items():
+        #     print(f"denotation: {denotation}")
+        #     concepts_dict = {k:float(v) for k,v in zip(self.symbols,concepts.flatten())}
+        #     print(f"concepts: {concepts_dict}")
 
         keys = torch.vstack(list(self.keys.values()))
         values = torch.vstack(list(self.values.values()))

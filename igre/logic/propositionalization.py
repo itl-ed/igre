@@ -16,9 +16,10 @@ def refexp2sentence(refexp:RefExp,
     :param referents: frozenset of frozensets
     :param domain: set of entities in the universe of discourse """
     grm = Grammar()
+    print(f"refexp to reduce: {refexp}")
     name, var, snt = refexp.name, refexp.var, refexp.snt
     refs = [elem for referent in referents for elem in referent]
-
+    
     snts, nsnts = [], []
     for individual in domain:
         snt_new = deepcopy(snt)
@@ -28,14 +29,13 @@ def refexp2sentence(refexp:RefExp,
         else:
             nsnts.append(NegatedSentence(snt_new))
 
-    if grm.OF_THE.matches(name):
-        """special treatment due to disjunctive nature of sentence formation"""
-        n,m = [int(i) for i in re.findall(r'\d+', name)]
-        return reduce(lambda x,y: OrSentence(x,y), 
-                    [reduce(lambda x,y: AndSentence(x,y), 
-                    chain([snts,combinations(nsnts, m-n)]))])
+    # if grm.OF_THE.matches(name):
+    #     """special treatment due to disjunctive nature of sentence formation"""
+    #     n,m = [int(i) for i in re.findall(r'\d+', name)]
+    #     snts = [reduce(lambda x,y: AndSentence(x,y),chain([snts,list(combinations(nsnts, m-n))]))]
+    #     return reduce(lambda x,y: OrSentence(x,y), )
 
-    elif grm.PRESUPOSITION.matches(name):
+    if grm.PRESUPOSITION.matches(name) or grm.OF_THE.matches(name):
         return reduce(lambda x,y: AndSentence(x,y), snts+nsnts)
     else:
         return reduce(lambda x,y: AndSentence(x,y), snts)
@@ -147,6 +147,7 @@ def propositionalize(snt: Sentence, domain: set)-> Sentence:
             assert len(nums) == 2
             n, m = nums
             snts = [situation(rstr,body,var,e,domain-e) for e in choose_n(domain,n)]
+            print(snts)
             return disj(domain,snts)
         else:
             raise NotSupportedTokenError(name)

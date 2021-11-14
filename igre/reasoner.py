@@ -5,10 +5,10 @@ from itertools import  product
 from functools import reduce
 
 from sympy import Symbol as sympy_symbol
-from sympy.logic.boolalg import to_cnf 
+from sympy.logic.boolalg import to_cnf
+import timeout_decorator 
 
 from igre.logic import *
-
 
 class Reasoner:
 
@@ -47,15 +47,18 @@ class Reasoner:
     def atom_in_model(self, atom: AtomicSentence) -> bool:
         "return true if atom is in the initial model"
         name, terms = atom.name, atom.terms
-        valuation = self.model.extension
-        return atom in valuation.keys() and terms in valuation[name]
+        if atom.arity == 1:
+            terms = terms[0]
+        key_in = atom.name in self.model.extension.keys()
+        ext_in = terms in self.model.extension[name]
+        return key_in and ext_in
 
+    @timeout_decorator.timeout(600, timeout_exception=StopIteration)
     def __get_cnf(self, snt: Sentence) -> Tuple[str,int]:
         """convert sentence to conjunctive normal form (CNF)
         :param snt: sentence to convert
 
         return: CNF, number of clauses in CNF"""
-
         def to_sympy(s):
             """convert sentence to sympy formula"""
             if isinstance(s, AtomicSentence):
@@ -75,6 +78,7 @@ class Reasoner:
                 raise NotSupportedSentenceError(s)
 
         cnf = str(to_cnf(to_sympy(snt)))
+
         num_clauses = cnf.count("&") + 1 
 
         ## Post-processing to match ADDMC syntax
@@ -103,11 +107,16 @@ class Reasoner:
     def add_sentence(self, snt: Sentence) -> None:
         """Add grounded sentence to logic theory and update: atom list,
         number of clauses, and cnf """
+        print(f'sentence to add: {snt}')
         self.theory.append(snt)
         self.__update_atom_index(snt)
-        cnf, num_clauses = self.__get_cnf(snt)
+        try:
+            cnf, num_clauses = self.__get_cnf(snt)
+        except StopIteration:
+            return ""
         self._cnf = self._cnf + "\n" + cnf
         self._num_clauses += num_clauses
+
 
     def add_refexp(self, refexp: RefExp, model: DomainModel) -> None:
         """Add referential expression and its referent to logic theory"""
@@ -115,7 +124,7 @@ class Reasoner:
         # propositionalize a sentence 
         snt = propositionalize(snt, model.entities)
         # add sentence to logic theory
-        self.add_sentence(snt)
+        return  self.add_sentence(snt)
 
     def WMC(self,
             query: str = None,
@@ -145,14 +154,20 @@ class Reasoner:
                             capture_output=True).stdout.decode('UTF-8')
 
         os.remove(tmp_path)
+
+        # sometimes we get errror message 
+        try:
+            wmc = float(wmc)
+        except ValueError:
+            wmc = 0.5
         
-        return float(wmc)
+        return wmc
 
     def _estimate_atom(self,
                     atom: AtomicSentence) -> Tuple[AtomicSentence,float]:
         """Estimate atom
         :param atom: atomic sentence """
-        if self.atom_in_model(atom):
+        if not self.atom_in_model(atom):
             return (atom,self.WMC(query=atom, tmp_path=f'./{atom}.cnf')/self.Z)
         else:
             return (atom, 1.0)
@@ -175,53 +190,62 @@ class Reasoner:
         pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
         return dict(pool.map(self._estimate_atom, self._atoms))
 
-
-class HeadOnlyReasoner(Reasoner):
     
-    def _filter(self, snt: Sentence) -> List[Sentence]:
-        if isinstance(snt, AtomicSentence):
-            return [snt]
-        elif isinstance(snt, NegatedSentence):
-            return self._filter(snt.snt)
-        elif isinstance(snt, ConnectiveSentence):
-            return self._filter(snt.left) + self._filter(snt.right)
-        elif isinstance(snt, QuantifierSentence):
-            return []
+    def add_full(self, refexp: RefExp, model: DomainModel) -> None:
+        """add full refexp with backoof strategy in case of long computation"""
+        rez = self.add_refexp(refexp, model)
+        if isinstance(rez, str):
+            self.add_head(refexp, model)
 
-    def add_refexp(self, refexp: RefExp, model: DomainModel) -> None:
-        print(f"refexp: {refexp}")
-        k = self._filter(refexp.snt)
-        print(f"k: {k}")
-        snt = reduce(lambda x,y: AndSentence(x,y), self._filter(refexp.snt))
+    def add_head(self, refexp: RefExp, model: DomainModel) -> None:
+
+        """add referential expression, but only head"""
+
+        def filter(snt: Sentence, var: Variable) -> List[Sentence]:
+            if isinstance(snt, AtomicSentence):
+                if len(snt.terms) == 1 and snt.terms[0] == var:
+                    return [snt]
+                else:
+                    return []
+            elif isinstance(snt, NegatedSentence):
+                return filter(snt.snt, var)
+            elif isinstance(snt, ConnectiveSentence):
+                return filter(snt.left, var) + filter(snt.right, var)
+            elif isinstance(snt, QuantifierSentence):
+                return filter(snt.body, var)
+
+        snt = reduce(lambda x,y: AndSentence(x,y), filter(refexp.snt, refexp.var))
 
         update_refexp = deepcopy(refexp)
         update_refexp.snt = snt
+        
+        self.add_refexp(update_refexp, model)
 
-        return super().add_refexp(update_refexp, model)
 
+    def add_exist(self, refexp: RefExp, model: DomainModel) -> None:
+        """add referential expression, but only use existential quantifier"""
 
-class ExistentialReasoner(Reasoner):
+        def filter(snt):
+            if isinstance(snt, AtomicSentence):
+                return snt
+            elif isinstance(snt, NegatedSentence):
+                return NegatedSentence(filter(snt.snt))
+            elif isinstance(snt, ConnectiveSentence):
+                return type(snt)(left=filter(snt.left), 
+                                right=filter(snt.right))
+            elif isinstance(snt, QuantifierSentence):
+                return QuantifierSentence(name = '_a_q',
+                                    var=snt.var,
+                                    rstr=filter(snt.rstr),
+                                    body=filter(snt.body)) 
 
-    def _filter(self, snt):
-        if isinstance(snt, AtomicSentence):
-            return snt
-        elif isinstance(snt, NegatedSentence):
-            return NegatedSentence(snt=self._filter(snt.snt))
-        elif isinstance(snt, ConnectiveSentence):
-            return type(snt)(left=self._filter(snt.left), 
-                            right=self._filter(snt.right))
-        elif isinstance(snt, QuantifierSentence):
-            return QuantifierSentence(name = '_a_q',
-                                var=snt.var,
-                                rstr=self._filter(snt.rstr),
-                                body=self._filter(snt.body)) 
-
-    def add_refexp(self, refexp: RefExp, model: DomainModel) -> None:
 
         new_refexp = deepcopy(refexp)
 
-        new_refexp.snt = self._filter(refexp.snt)
+        new_refexp.snt = filter(refexp.snt)
         new_refexp.name = '_a_q'
 
-        return super().add_refexp(new_refexp, model)
+        rez = self.add_refexp(refexp, model)
+        if isinstance(rez, str):
+            self.add_head(refexp, model)
 

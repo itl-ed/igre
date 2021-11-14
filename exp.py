@@ -1,22 +1,20 @@
-from typing import Dict, List
+from typing import Dict, List, Tuple
 from argparse import ArgumentParser
 import random
 from datetime import datetime
-from collections import defaultdict, Counter
-from functools import reduce
+from collections import defaultdict
 from igre.logic.model import DomainModel, Denotation, Entities
 
 import torch
 from torch import  Tensor
-from sklearn.metrics import classification_report
-from sklearn.preprocessing import MultiLabelBinarizer
-import wandb
 
-from igre.utils import ShapeWorldDataset, create_model_init
+import wandb
+from igre.logic.syntax import RefExp
+
+from igre.utils import ShapeWorldDataset
 from igre.grounder import Grounder
-from igre.reasoner import Reasoner, HeadOnlyReasoner, ExistentialReasoner
-from igre.lang import RefExpParser
-from igre.logic import LogicRefExpParser
+from igre.reasoner import Reasoner
+
 
 
 def prediction(entities: Entities,
@@ -33,7 +31,7 @@ def prediction(entities: Entities,
         extension = defaultdict(set)
         for denotation, feature in features.items():
             values_pred = grounder.predict(feature)
-            idxs = (values_pred >= threshold).nonzero()
+            idxs = torch.nonzero(values_pred >= threshold)
             for idx in idxs:
                 extension[grounder.symbols[idx[1]]].add(denotation)
         return extension
@@ -47,51 +45,79 @@ def prediction(entities: Entities,
 
 def metrics(model_true: DomainModel,
             model_pred: DomainModel,
-            model_init: DomainModel) -> None:
+            refexps: List[RefExp],
+            flag: str="") -> Dict[str, float]:
+    """evaluation metrics for 
+    precision, recall, f1 for model and reference prediction"""
 
-    """predicted model evaluation"""
-    print("========================================")
-    print("Evaluation")
-    print(f"Ground-truth domain model: {model_true}")
-    print(f"Predicted domain model: {model_pred}")
-    print("========================================")
-    print("Extrinsic evaluation")
-    atoms_init = sum([list(x) for x in model_init.invert().values()],[])
+    def prf(pred: set, real: set) -> Tuple[float, float, float]:
 
-    atoms_true = model_true.invert()
-    atoms_true = [[x for x in xs if x not in atoms_init] for xs in atoms_true.values()]
+        tp = pred.intersection(real)
+        p = len(tp)/len(pred) if len(pred) > 0 else 0
+        r = len(tp)/len(real) if len(real) > 0 else 0
+        f = 2*p*r/(p+r) if p+r > 0 else 0
 
-    atoms_pred = model_pred.invert()
-    atoms_pred = [list(atoms_pred[denotation]) for denotation, atoms in model_true.invert().items()]
-    atoms_pred = [[x for x in xs if x not in atoms_init] for xs in atoms_pred]
-    mlb = MultiLabelBinarizer().fit(atoms_pred+atoms_true)
-    atoms_true = mlb.transform(atoms_true)
-    atoms_pred = mlb.transform(atoms_pred)
-    summ = classification_report(atoms_true, atoms_pred, zero_division=True)
-    print(summ)
+        return p, r, f
 
-    # print(f"Intrinsic evaluation")
-    # refexps = [parser(refexp) for refexp in refexps]
-    # den_true = [[model_true.denotations(refexp.snt, refexp.var) for refexp in refexps]]
-    # den_pred = [[model_pred.denotations(refexp.snt, refexp.var) for refexp in refexps]]
-    # mlb = MultiLabelBinarizer().fit(den_pred + den_true)
-    # print(den_true, den_pred)
-    # den_true = mlb.transform(den_true)
-    # den_pred = mlb.transform(den_pred)
-    # summ = classification_report(den_true, den_pred, zero_division=True)
-    # print(summ)    
+    def save_avg(elems: List[float]) -> float:
+
+        return sum(elems)/len(elems) if len(elems) > 0 else 0
+
+    model_ps, model_rs, model_fs = [],[],[]
+    for symbol in model_pred.extension.keys():
+
+        if symbol == 'object':
+            continue
+
+        predicted = model_pred.extension[symbol]
+        ground = model_true.extension[symbol]
+
+        p,r, f = prf(predicted, ground)
+        model_ps.append(p)
+        model_rs.append(r)
+        model_fs.append(f)
+
+    ref_ps, ref_rs, ref_fs = [],[],[]
+    for refexp in refexps:
+
+        predicted = model_true.denotations(refexp.snt, refexp.var)
+        ground = model_pred.denotations(refexp.snt, refexp.var)
+        p,r, f = prf(predicted, ground)
+        ref_ps.append(p)
+        ref_rs.append(r)
+        ref_fs.append(f)
+
+    print(f"model ps: {model_ps}")
+    print(f"model rs: {model_rs}")
+    print(f"model fs: {model_fs}")
+    print(f"ref ps: {ref_ps}")
+    print(f"ref rs: {ref_rs}")
+    print(f"ref fs: {ref_fs}")
+
+    return {f"{flag}model_p": save_avg(model_ps), 
+            f"{flag}model_r": save_avg(model_rs),
+            f"{flag}model_f": save_avg(model_fs),
+            f"{flag}reference_p": save_avg(ref_ps), 
+            f"{flag}reference_r": save_avg(ref_rs),
+            f"{flag}reference_f": save_avg(ref_fs),
+            }
 
 
-def evaluation(config, dataloader, prop_grounder, rels_grounder):
+def evaluation(config: wandb.Config,
+            dset: ShapeWorldDataset,
+            prop_grounder: Grounder,
+            rels_grounder: Grounder,) -> None:
 
-    for prop_features,rels_features,refexps, _ , model_true in dataloader:
+    results = {"test_model_p": 0, 
+            "test_model_r": 0,
+            "test_model_f": 0,
+            "test_reference_p": 0, 
+            "test_reference_r": 0,
+            "test_reference_f": 0,
+            }
 
-        atoms_true = model_true.invert()
-        
-        for denotation, feature in prop_features.items():
-            prop_pred = prop_grounder.predict(feature)
+    for prop_features,rels_features,refexps, model_true in dset:
 
-        model_init = create_model_init(model_true, args.known)
         model_pred = prediction(model_true.entities,
                             prop_features,
                             prop_grounder,
@@ -100,8 +126,14 @@ def evaluation(config, dataloader, prop_grounder, rels_grounder):
                             rels_grounder,
                             config.rels_threshold)
 
-        if args.test_evaluation:
-            metrics(model_true, model_pred, model_init)
+        model_results = metrics(model_true, model_pred, refexps, flag="test_")
+
+        for result in results.keys():
+            results[result] += model_results[result]
+
+    results = {k:v/len(dset) for k,v in results.items()}
+
+    wandb.log(results)
 
 
 def main(config):
@@ -109,16 +141,14 @@ def main(config):
     random.seed(config.seed)
     torch.manual_seed(config.seed)
 
-    language = RefExpParser(config.grm_path,config.ace_path,config.utool_path)
-    logic = LogicRefExpParser()
-    parser = lambda x: logic(language(x))
-
     train = ShapeWorldDataset(data_path = config.train_path,
                             feature_extractor = config.feature_extractor,
                             img_size = config.img_size,
                             num_worlds = config.train_num_worlds,
                             num_refexp = config.train_num_ref_exp,
-                            num_corr = config.train_num_corrections,
+                            grm_path=config.grm_path,
+                            ace_path=config.ace_path,
+                            utool_path=config.utool_path,
                             shuffle = config.train_shuffle)
 
     test = ShapeWorldDataset(data_path = config.test_path,
@@ -126,6 +156,9 @@ def main(config):
                             img_size = config.img_size,
                             num_worlds = config.test_num_worlds,
                             num_refexp = config.test_num_ref_exp,
+                            grm_path=config.grm_path,
+                            ace_path=config.ace_path,
+                            utool_path=config.utool_path,
                             shuffle = config.test_shuffle)
 
     prop_grounder = Grounder(input_size = config.prop_input_size,
@@ -142,7 +175,7 @@ def main(config):
     
     train_iter, total_obs = 0, 0
 
-    for prop_features, rels_features, refexps, corrs, model_true in train:
+    for  prop_features, rels_features, refexps, model_true in train:
 
         # re-index entitities in the domain model
         total_obs, index = model_true.reindex(total_obs)
@@ -154,20 +187,13 @@ def main(config):
         rels_grounder.add_keys(rels_features)
 
         # create reasoner for a new situation
-        model_init = create_model_init(model_true, config.known)
-
-        if config.use_headonly_reasoner:
-            reasoner = HeadOnlyReasoner(model = model_init, addmc_path = config.addmc_path)
-        elif config.use_existential_reasoner:
-            reasoner = ExistentialReasoner(model = model_init, addmc_path = config.addmc_path)
-        else:
-            reasoner = Reasoner(model = model_init, addmc_path = config.addmc_path)
+        reasoner = Reasoner(addmc_path = config.addmc_path, 
+                        model=DomainModel(model_true.entities))
 
         for refexp in refexps:
 
             train_iter += 1
-            wandb.log({"referential expression":refexp})
-            refexp = parser(refexp)
+            wandb.log({"referential expression": wandb.Html(str(refexp))})
             
             prop_grounder.add_symbols([s for s,a in refexp.symbols if a == 1])
             rels_grounder.add_symbols([s for s,a in refexp.symbols if a == 2])
@@ -188,11 +214,12 @@ def main(config):
                                 rels_grounder,
                                 config.rels_threshold)
             
-            if config.train_evaluation:
-                metrics(model_true, model_pred, model_init)
-            evaluation(config, test, prop_grounder, rels_grounder)
+            result = metrics(model_true, model_pred, [refexp], flag="train_")
+            wandb.log(result)
 
-            reasoner.add_refexp(refexp, model_true)
+            evaluation(config, test, prop_grounder, rels_grounder)
+            reasoner.add_exist(refexp, model_true)
+
             # batch update
             if train_iter != 1 and train_iter % config.batch_freq == 0:
 
@@ -206,39 +233,16 @@ def main(config):
                                         shuffle = config.batch_shuffle,
                                         report_freq = config.batch_report_freq)
 
-        for corr,referant in corrs:
-
-            train_iter += 1
-            # get logical form
-            corr  = parser(corr)
-            snt = corr.to_snt([referant])
-            reasoner.add_sentence(snt)
-            # batch update
-            if train_iter != 1 and train_iter % args.batch_freq == 0:
-                prop_grounder.batch_learning_mode(epochs = config.batch_epochs,
-                                        batch_size = config.batch_size,
-                                        shuffle = config.batch_shuffle,
-                                        report_freq = config.batch_report_freq)
-
-                rels_grounder.batch_learning_mode(epochs = config.batch_epochs,
-                                        batch_size = config.batch_size,
-                                        shuffle = config.batch_shuffle,
-                                        report_freq = config.batch_report_freq)
-
-            evaluation(config, test, prop_grounder, rels_grounder)
-
 if __name__ == '__main__':
 
     parser = ArgumentParser("IGRE experiments")
     parser.add_argument("--log", type=str, help="logging location")
-    parser.add_argument("--seed", default=66, type=int, help="random seed")
+    parser.add_argument("--seed", default=42, type=int, help="random seed")
     # model 
     parser.add_argument("--feature-extractor", default="densenet161", help="feature extractor to use for images")
     parser.add_argument("--img-size", default=64, type=int, help="size of the image")
     parser.add_argument("--addmc-path", default="./external/addmc", help="path to ADDMC weigthed model counter")
     parser.add_argument("--known", nargs='*',default=[], help='list of known symbols')
-    parser.add_argument("--use-headonly-reasoner", default=False, action="store_true", help="if true, only use head for estimation")
-    parser.add_argument("--use-existential-reasoner", default=False, action="store_true", help="if true use existential reasoner")
     ## natural language processing
     parser.add_argument("--grm-path", default="./external/erg-2018-x86-64-0.9.31.dat", help="path to grammar file")
     parser.add_argument("--ace-path", default="./external/ace", help="path to ACE binaries")
@@ -257,7 +261,6 @@ if __name__ == '__main__':
     parser.add_argument("--train-path", help="path to training data")
     parser.add_argument("--train-num-worlds", default=30,type=int, help="number of worlds to use for training images")
     parser.add_argument("--train-num-ref-exp", default=5,type=int, help="number of referential expressions to use for singe world in training")
-    parser.add_argument("--train-num-corrections", default=5, type=int, help="number of corrections to use")
     parser.add_argument("--train-shuffle", action="store_true", default=False, help="stuffle the training data")
     parser.add_argument("--train-evaluation", action="store_true", default=False, help="evaluate during training")
     # batch updates
@@ -276,7 +279,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     ## initialize experiments
-    wandb.init(project='igre', entity='rimvydasrub', name=str(datetime.now()))
+    wandb.init(project='igre', entity='rimvydasrub', name='exitsts'+str(datetime.now()))
     config = wandb.config
     config.update(args)
 

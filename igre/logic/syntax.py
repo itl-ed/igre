@@ -76,6 +76,11 @@ class Sentence:
     def symbols(self) -> set:
         """symbol factory"""
         raise NotImplementedError
+    
+    @property
+    def symbols_all(self) -> list:
+        """all symbols factory"""
+        raise NotImplementedError
 
     def __str__(self) -> str:
         return str(self.snt)
@@ -98,6 +103,10 @@ class AtomicSentence(Sentence):
     @property
     def symbols(self) -> set:
         return set([(self.name, self.arity)])
+
+    @property
+    def symbols_all(self) -> list:
+        return [self.name]
 
     def __str__(self) -> str:
         args = ",".join([str(t) for t in self.terms])
@@ -123,6 +132,9 @@ class NegatedSentence(Sentence):
     @property
     def symbols(self) -> set:
         return self.snt.symbols
+    @property
+    def symbols_all(self) -> list:
+        return self.snt.symbols_all
 
     def __str__(self) -> str:
         return f"!({self.snt})"
@@ -149,6 +161,11 @@ class ConnectiveSentence(Sentence):
     @property
     def symbols(self) -> set:
         return self.left.symbols | self.right.symbols
+
+    @property
+    def symbols_all(self) -> list:
+        return self.left.symbols_all + self.right.symbols_all
+    
 
     def __str__(self) -> str:
         return f"{self.left} {self.conn} {self.right}"
@@ -206,6 +223,10 @@ class QuantifierSentence(Sentence):
     @property
     def symbols(self) -> set:
         return self.rstr.symbols | self.body.symbols
+
+    @property
+    def symbols_all(self) -> list:
+        return self.rstr.symbols_all + self.body.symbols_all
 
     def __str__(self) -> str:
         return f"{self.name} {self.var}.({self.rstr},{self.body})"
