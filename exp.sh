@@ -9,7 +9,7 @@ mkdir $1
 # SPATIAL: ['above', 'below', 'right', 'left']
 
 python3 exp.py  --log $1 \
-                --seed 33 \
+                --seed 66 \
                 --feature-extractor densenet161 \
                 --img-size 64 \
                 --addmc-path "./external/addmc" \

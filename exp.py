@@ -15,8 +15,6 @@ from igre.logic.syntax import AtomicSentence, NegatedSentence, OrSentence, RefEx
 from igre.utils import ShapeWorldDataset
 from igre.grounder import Grounder
 from igre.reasoner import Reasoner
-from igre.logic import LogicRefExpParser
-from igre.lang import RefExpParser
 
 
 
@@ -169,11 +167,6 @@ def main(config):
     random.seed(config.seed)
     torch.manual_seed(config.seed)
 
-    lang = RefExpParser(grm_path=config.grm_path,
-                        ace_path=config.ace_path,
-                        utool_path=config.utool_path)
-    logic = LogicRefExpParser()
-    parser = lambda x: logic(lang(x))
 
     train = ShapeWorldDataset(data_path = config.train_path,
                             feature_extractor = config.feature_extractor,
@@ -271,6 +264,9 @@ def main(config):
                                         batch_size = config.batch_size,
                                         shuffle = config.batch_shuffle,
                                         report_freq = config.batch_report_freq)
+        if train_iter == 50:
+            """early stopping"""
+            break
 
 if __name__ == '__main__':
 
@@ -321,7 +317,7 @@ if __name__ == '__main__':
     wandb.login(key="960dbf7b3effe15f5578aa067e9c88d77f076f51")
     wandb.init(project='igre', 
             entity='rimvydasrub',
-            group="exp_final",
+            group="for_rez",
             dir = "./wandb_tmp/",
             name='full-axioms_'+str(datetime.now()))
     config = wandb.config

@@ -51,7 +51,7 @@ class Grounder:
             nn.ReLU())
 
         p = list(self.query_proj.parameters())+list(self.key_proj.parameters())
-        self.optim = torch.optim.Adam(p, lr=1e-3, weight_decay=1e-5)
+        self.optim = torch.optim.Adam(p, lr=1e-4, weight_decay=1e-5)
         self.criterion = nn.BCELoss()
         # dictionary of denotation to key (features)
         self.keys: Dict[Denotation, Tensor] = dict()
@@ -212,7 +212,8 @@ class Grounder:
             keys = self.__get_support_keys(self.keys, denotations)
 
             values = self.__get_support_values(self.values, denotations)
-                
+
+
         return self.attention(query, keys, values)
 
     def batch_learning_mode(self,
