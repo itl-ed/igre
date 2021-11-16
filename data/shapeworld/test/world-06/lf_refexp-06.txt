@@ -1,5 +1,0 @@
-_the_1_q x4.((blue(x4) ^ object(x4)),unknown(x4))
-(_at_most_1_q x4.(triangle(x4),unknown(x4))  v  _a_q x4.(circle(x4),unknown(x4)))
-_a_q x4.(_a_q x11.((yellow(x11) ^ triangle(x11)),((green(x4) ^ object(x4)) ^ below(x4,x11))),unknown(x4))
-_a_q x4.(_the_q x16.((green(x16) ^ cross(x16)),((yellow(x4) ^ triangle(x4)) ^ right(x4,x16))),unknown(x4))
-_exactly_1_q x4.(_a_q x13.(_the_q x24.(cross(x24),(triangle(x13) ^ right(x13,x24))),(ellipse(x4) ^ below(x4,x13))),unknown(x4))

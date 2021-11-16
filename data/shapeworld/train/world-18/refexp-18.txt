@@ -1,5 +1,0 @@
-exactly one cross above a cyan ellipse .
-a cross to the left of the one green semicircle .
-a green semicircle to the right of a green cross .
-a cyan object below exactly one cross .
-a cyan object to the right of a green ellipse .

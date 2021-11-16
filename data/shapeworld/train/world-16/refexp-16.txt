@@ -1,5 +1,0 @@
-a blue object to the right of the one green square .
-a green object to the right of one of the three squares .
-a green object to the left of a square .
-a blue square to the right of a square .
-a blue object to the left of a green square .

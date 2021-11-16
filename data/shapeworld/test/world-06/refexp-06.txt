@@ -1,5 +1,0 @@
-the one blue object . 
-at most one triangle or a circle .
-a green object below a yellow triangle .
-a yellow triangle to the right of the one green cross .
-exactly one ellipse below a triangle .

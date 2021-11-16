@@ -1,5 +1,0 @@
-a red object to the left of the one blue triangle  .
-a blue triangle above a circle .
-a blue object to the left of a red square .
-every blue object above a red circle .
-a triangle above the three blue squares .

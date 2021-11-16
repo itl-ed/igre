@@ -1,5 +1,0 @@
-a blue object to the right of a cyan object .
-exactly one ellipse to the right of the one triangle .
-a blue circle to the right of the one pentagon .
-a magenta pentagon to the left of the one yellow object .
-a circle to the left of a cyan semicircle .

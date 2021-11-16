@@ -1,5 +1,0 @@
-a pentagon not below a green cross .
-a green object not to the right of exactly one red pentagon .
-a red pentagon to the left of a cross .
-a red object to the left of at most one green cross .
-every red object above all green objects .

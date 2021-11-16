@@ -1,5 +1,0 @@
-a cross not to the left of one of the two yellow objects .
-a yellow ellipse below the one blue object.
-a blue object not below a yellow ellipse .
-every cross above an ellipse .
-a red object to the left of a yellow object .

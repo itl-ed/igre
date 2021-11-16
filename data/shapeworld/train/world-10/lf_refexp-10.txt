@@ -1,5 +1,0 @@
-_a_q x4.(_the_q x16.(_the_q x23.((red(x23) ^ square(x23)),((blue(x16) ^ triangle(x16)) ^ above(x16,x23))),((red(x4) ^ object(x4)) ^ left(x4,x16))),unknown(x4))
-_a_q x4.(_a_q x11.(circle(x11),((blue(x4) ^ triangle(x4)) ^ above(x4,x11))),unknown(x4))
-_a_q x4.(_a_q x16.(_the_q x24.((red(x24) ^ circle(x24)),((red(x16) ^ square(x16)) ^ above(x16,x24))),((blue(x4) ^ object(x4)) ^ left(x4,x16))),unknown(x4))
-_every_q x4.(_a_q x11.((red(x11) ^ circle(x11)),((blue(x4) ^ object(x4)) ^ above(x4,x11))),unknown(x4))
-_a_q x4.(_the_3_q x10.((blue(x10) ^ square(x10)),(triangle(x4) ^ above(x4,x10))),unknown(x4))

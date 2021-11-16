@@ -1,5 +1,0 @@
-a blue circle to the left of a cyan object .
-a yellow object below a green pentagon .
-a pentagon above the one blue circle .
-exactly one cyan triangle above a square .
-a cyan triangle to the right of the one green pentagon .

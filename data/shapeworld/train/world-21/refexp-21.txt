@@ -1,5 +1,0 @@
-a blue object to the left of two of the three yellow objects .
-a yellow ellipse not below a blue ellipse .
-a green cross to the right of a yellow object .
-the one magenta triangle below both crosses .
-a yellow square to the right of the one yellow ellipse .

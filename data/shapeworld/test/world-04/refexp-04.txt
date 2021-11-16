@@ -1,5 +1,0 @@
-a blue object below the one magenta object .
-a magenta ellipse above a triangle .
-the one magenta ellipse above a blue object .
-a triangle below a magenta ellipse .
-exactly one red triangle above the one blue triangle .

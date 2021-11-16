@@ -1,5 +1,0 @@
-a green square to the left of the one triangle .
-every pentagon below a green object .
-a red ellipse to the left of a blue object .
-a green triangle to the left of a red object .
-a red object to the left of exactly one blue ellipse .

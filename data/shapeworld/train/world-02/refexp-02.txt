@@ -1,5 +1,0 @@
-a blue object to the left of a square .
-a blue object to the left of the one pentagon .
-a yellow square above a circle .
-a green object to the right of the one blue circle .
-every blue circle to the left of at most two green squares .

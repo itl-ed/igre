@@ -1,5 +1,0 @@
-_at_least_2_q x4.((red(x4) ^ triangle(x4)),unknown(x4))
-(_a_q x4.(triangle(x4),unknown(x4))  v  _a_q x4.(square(x4),unknown(x4)))
-_a_q x4.(_a_q x11.((red(x11) ^ ellipse(x11)),(square(x4) ^ below(x4,x11))),unknown(x4))
-_a_q x4.(_the_1_q x10.((cyan(x10) ^ object(x10)),(triangle(x4) ^ below(x4,x10))),unknown(x4))
-_a_q x4.(_both_q x11.(_both_q x21.(ellipse(x21),((red(x11) ^ square(x11)) ^ below(x11,x21))),((cyan(x4) ^ object(x4)) ^ above(x4,x11))),unknown(x4))

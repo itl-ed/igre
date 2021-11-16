@@ -1,5 +1,0 @@
-exactly one cyan circle to the right of a magenta ellipse .
-a circle below a circle that is above the one ellipse .
-a magenta ellipse to the left of exactly one cyan circle .
-an ellipse below both circles .
-a magenta ellipse not to the right of a blue circle .

@@ -1,5 +1,0 @@
-a yellow object to the right of the one blue circle .
-a blue circle below a yellow object .
-a semicircle not below a blue circle .
-a circle to the left of the one semicircle .
-exactly one blue circle to the left of a yellow semicircle .
