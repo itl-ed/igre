@@ -13,7 +13,7 @@ python3 exp.py  --log $1 \
                 --feature-extractor densenet161 \
                 --img-size 64 \
                 --addmc-path "./external/addmc" \
-                --grm-path "./external/erg-2018-x86-64-0.9.31.dat" \
+                --grm-path "./external/erg-2018-x86-64-0.9.34.dat" \
                 --ace-path "./external/ace" \
                 --utool-path "./external/Utool-3.1.1.jar" \
                 --prop-input-size 1006 \
@@ -24,7 +24,7 @@ python3 exp.py  --log $1 \
                 --rels-emb-size 5 \
                 --rels-supp-size 3 \
                 --rels-threshold 0.6 \
-                --train-path "./data/shapeworld/train" \
+                --train-path "./data/train" \
                 --train-num-worlds 30 \
                 --train-num-ref-exp 5 \
                 --train-shuffle \
@@ -34,7 +34,7 @@ python3 exp.py  --log $1 \
                 --batch-size 8 \
                 --batch-shuffle \
                 --batch-report-freq 10 \
-                --test-path "./data/shapeworld/test" \
+                --test-path "./data/test" \
                 --test-num-worlds 10 \
                 --test-num-ref-exp 5 \
                 --test-evaluation > $1/log.txt
