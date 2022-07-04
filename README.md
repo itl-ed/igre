@@ -1,5 +1,4 @@
-# igre
-Interactive Symbol grounding with Complex Referential Expressions
+# Interactive Symbol Grounding with Complex Referential Expressions
 
 ## Instalation
 
@@ -10,4 +9,17 @@ to exectute experiments run the folllowing command
 
 ```bash
 ./exp.sh log-file-name
+```
+
+
+## Citing
+```
+@inproceedings{rubavicius:lascarides:2022,
+author = {Rimvydas Rubavicius and Alex Lascarides},
+title = {Interactive Symbol Grounding with Complex Referential Expressions},
+year = {2022},
+booktitle = {Proceedings of the Annual Conference of the
+North American Chapter of the Association for Computational Linguistics (NAACL)},  
+address = {Seattle, July 2022}
+}
 ```
